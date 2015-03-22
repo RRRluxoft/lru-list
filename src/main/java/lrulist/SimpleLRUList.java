@@ -76,7 +76,4 @@ public class SimpleLRUList<K, V> implements LRUList<K, V> {
         return entries.iterator();
     }
 
-    class Node {
-
-    }
 }

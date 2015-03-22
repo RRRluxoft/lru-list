@@ -1,4 +1,5 @@
 package lrulist;
 
-public class Entry {
+public class Entry<K, V> {
+    Node node;
 }

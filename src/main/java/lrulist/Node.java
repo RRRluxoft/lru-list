@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class Node<E> {
 
-    Entry entry;
+    final Entry entry;
     final AtomicReference<Node<E>> next;
     final AtomicReference<Node<E>> prev;
 

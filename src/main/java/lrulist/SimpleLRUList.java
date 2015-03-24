@@ -3,6 +3,7 @@ package lrulist;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Simple LRU list.
@@ -12,13 +13,16 @@ import java.util.concurrent.ConcurrentLinkedDeque;
  */
 public class SimpleLRUList<K, V> implements LRUList<K, V> {
     private final Object lock = new Object();
-    private final ConcurrentHashMap<K, V> map = new ConcurrentHashMap<K, V>() {
+    private final LinkedList<Node> nodeList = new LinkedList<Node>();
+    private final ConcurrentHashMap<K, Entry<K, V>> map = new ConcurrentHashMap<K, Entry<K, V>>() {
 //        @Override
         protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
             return capacity < size();
         }
     };
-    private final Deque<Node> nodeList = new ConcurrentLinkedDeque<Node>();
+
+    private AtomicReference<Node> head = new AtomicReference<Node>(new Node(null, null, null));
+    private AtomicReference<Node> tail = head;
 
     private final int capacity;
 

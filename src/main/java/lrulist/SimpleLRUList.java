@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class SimpleLRUList<K, V> implements LRUList<K, V> {
     private final Object lock = new Object();
     private final LinkedList<Node> nodeList = new LinkedList<Node>();
-    private final ConcurrentHashMap<K, Entry<K, V>> map = new ConcurrentHashMap<K, Entry<K, V>>() {
+    private final ConcurrentHashMap<K, V> map = new ConcurrentHashMap<K, V>() {
 //        @Override
         protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
             return capacity < size();
@@ -56,6 +56,19 @@ public class SimpleLRUList<K, V> implements LRUList<K, V> {
 
             return value;
         }
+    }
+
+    private  boolean offer(Node node) {
+
+        return true;
+    }
+
+    private  void purge() {
+
+    }
+
+    private void evict(Node node) {
+
     }
 
     @Override

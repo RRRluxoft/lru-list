@@ -3,6 +3,7 @@ package lrulist;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -12,6 +13,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @param <V>
  */
 public class SimpleLRUList<K, V> implements LRUList<K, V> {
+    AtomicBoolean flag = new AtomicBoolean(false);
     private final Object lock = new Object();
     private final LinkedList<Node> nodeList = new LinkedList<Node>();
     private final ConcurrentHashMap<K, V> map = new ConcurrentHashMap<K, V>() {
@@ -46,19 +48,22 @@ public class SimpleLRUList<K, V> implements LRUList<K, V> {
 
     @Override
     public V put(K key, V value) {
-        synchronized (lock) {
-            V oldValue = map.get(key);
+        V oldValue = map.get(key);
+        Node newNode = new Node(tail, null , null);
+        nodeList.offerLast(newNode);
 
-            if (oldValue != null)
-                return oldValue;
+        if (oldValue != null)
+            return oldValue;
 
-            map.putIfAbsent(key, value);
+        map.putIfAbsent(key, value);
 
-            return value;
-        }
+        return value;
     }
 
-    private  boolean offer(Node node) {
+    private  boolean offer(Entry entry) {
+        if (entry != tail.get().getEntry()) {
+            Node curNode = nodeList.getLast();
+        }
 
         return true;
     }

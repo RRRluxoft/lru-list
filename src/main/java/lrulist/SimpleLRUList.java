@@ -2,9 +2,9 @@ package lrulist;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import lrulist.Entry;
 
 /**
  * Simple LRU list.
@@ -60,9 +60,12 @@ public class SimpleLRUList<K, V> implements LRUList<K, V> {
         return value;
     }
 
-    private  boolean offer(Entry entry) {
+    private  boolean offer(lrulist.Entry entry) {
         if (entry != tail.get().getEntry()) {
             Node curNode = nodeList.getLast();
+            Node newNode = new Node(tail.lazySet(curNode), entry, null);
+
+            if (entry.getNode() )
         }
 
         return true;

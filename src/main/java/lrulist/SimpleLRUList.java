@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-import lrulist.EntryMap;
 
 /**
  * Simple LRU list.
@@ -45,7 +44,9 @@ public class SimpleLRUList<K, V> implements LRUList<K, V> {
     public V put(K key, V value) {
         V oldValue = map.get(key);
         Node newNode = new Node(tail, null , null);
-        nodeList.offerLast(newNode);
+        if (nodeList.offerLast(newNode)) {
+
+        }
 
         if (oldValue != null)
             return oldValue;

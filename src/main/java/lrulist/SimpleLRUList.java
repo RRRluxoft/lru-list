@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-import lrulist.Entry;
+import lrulist.EntryMap;
 
 /**
  * Simple LRU list.
@@ -16,12 +16,7 @@ public class SimpleLRUList<K, V> implements LRUList<K, V> {
     AtomicBoolean flag = new AtomicBoolean(false);
     private final Object lock = new Object();
     private final LinkedList<Node> nodeList = new LinkedList<Node>();
-    private final ConcurrentHashMap<K, V> map = new ConcurrentHashMap<K, V>() {
-//        @Override
-        protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
-            return capacity < size();
-        }
-    };
+    private final ConcurrentHashMap<K, V> map = new ConcurrentHashMap<K, V>();
 
     private AtomicReference<Node> head = new AtomicReference<Node>(new Node(null, null, null));
     private AtomicReference<Node> tail = head;
@@ -60,15 +55,22 @@ public class SimpleLRUList<K, V> implements LRUList<K, V> {
         return value;
     }
 
-    private  boolean offer(lrulist.Entry entry) {
+    private  boolean offer(EntryMap<K, V> entry) {
         if (entry != tail.get().getEntry()) {
-            Node curNode = nodeList.getLast();
-            Node newNode = new Node(tail.lazySet(curNode), entry, null);
+            Node curNodeList = nodeList.getLast();
+            Node newNode = new Node(null, entry, null);
+            Node currNode = entry.getNode();
 
-            if (entry.getNode() )
+            if (entry.getNode().compareAndSet(currNode, newNode)) {
+                tail.lazySet(newNode);
+                return true;
+                if (currNode != null) {
+                   // TODO:  cleanup()
+                }
+            }
+            return true;
         }
-
-        return true;
+        return false;
     }
 
     private  void purge() {

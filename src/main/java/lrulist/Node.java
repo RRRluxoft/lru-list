@@ -5,21 +5,21 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class Node<E> {
 
-    private Entry entry;
+    private EntryMap entry;
     final AtomicReference<Node<E>> next;
     final AtomicReference<Node<E>> prev;
 
-    public Node(AtomicReference<Node<E>> prev, Entry entry, AtomicReference<Node<E>> next) {
+    public Node(AtomicReference<Node<E>> prev, EntryMap entry, AtomicReference<Node<E>> next) {
         this.prev = prev;
         this.next = next;
         this.entry = entry;
     }
 
-    public Entry getEntry() {
+    public EntryMap getEntry() {
         return entry;
     }
 
-    public void setEntry(Entry entry) {
+    public void setEntry(EntryMap entry) {
         this.entry = entry;
     }
 }

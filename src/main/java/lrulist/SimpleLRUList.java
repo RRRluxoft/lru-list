@@ -12,8 +12,8 @@ import java.util.concurrent.atomic.AtomicReference;
  * @param <V>
  */
 public class SimpleLRUList<K, V> implements LRUList<K, V> {
-    AtomicBoolean flag = new AtomicBoolean(false);
     private final Object lock = new Object();
+    private AtomicBoolean flag = new AtomicBoolean(false);
     private final LinkedList<Node> nodeList = new LinkedList<Node>();
     private final ConcurrentHashMap<K, V> map = new ConcurrentHashMap<K, V>();
 
@@ -30,12 +30,9 @@ public class SimpleLRUList<K, V> implements LRUList<K, V> {
     public V get(K key) {
         synchronized (lock) {
             final V value = map.remove(key);
-
             if (value == null)
                 return null;
-
             map.put(key, value);
-
             return value;
         }
     }
@@ -47,12 +44,9 @@ public class SimpleLRUList<K, V> implements LRUList<K, V> {
         if (nodeList.offerLast(newNode)) {
 
         }
-
         if (oldValue != null)
             return oldValue;
-
         map.putIfAbsent(key, value);
-
         return value;
     }
 
@@ -66,7 +60,7 @@ public class SimpleLRUList<K, V> implements LRUList<K, V> {
                 tail.lazySet(newNode);
                 return true;
                 if (currNode != null) {
-                   // TODO:  cleanup()
+                    // TODO:  cleanup()
                 }
             }
             return true;
@@ -102,6 +96,59 @@ public class SimpleLRUList<K, V> implements LRUList<K, V> {
             }
         }
         return entries.iterator();
+    }
+
+    public class EntryMap<K, V> implements Entry<K, V> {
+        final K key;
+        final V value;
+        private Node<?> node;
+
+        public EntryMap(K key, V value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        public Node<?> getNode() {
+            return node;
+        }
+
+        public void setNode(Node<?> node) {
+            this.node = node;
+        }
+
+        @Override
+        public K getKey() {
+            return key;
+        }
+
+        @Override
+        public V getValue() {
+            return value;
+        }
+    }
+
+    class Node<E> extends LinkedList {
+        private final int capacity = map.size();
+        private Collection col = new ArrayList(capacity);
+        private LinkedList list = new LinkedList(col);
+
+        private EntryMap entry;
+        final AtomicReference<Node<E>> next;
+        final AtomicReference<Node<E>> prev;
+
+        public Node(AtomicReference<Node<E>> prev, EntryMap entry, AtomicReference<Node<E>> next) {
+            this.prev = prev;
+            this.next = next;
+            this.entry = entry;
+        }
+
+        public EntryMap getEntry() {
+            return entry;
+        }
+
+        public void setEntry(EntryMap entry) {
+            this.entry = entry;
+        }
     }
 
 }
